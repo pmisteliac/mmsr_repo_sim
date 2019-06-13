@@ -2,8 +2,11 @@ package mmsr.repo.sim.term_extractor;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+
+import com.github.javaparser.ast.CompilationUnit;
 
 public final class Repository {
 	
@@ -21,6 +24,12 @@ public final class Repository {
 		String[] filterExtensions = {"java"};
 		Collection<File> javaFiles = FileUtils.listFiles(repoDirectory, filterExtensions, true);
 		return javaFiles;
+	}
+	
+	public Collection<JavaCompilationUnit> getAllJavaCompilationUnits() {
+		return this.getAllJavaFilePaths().stream()
+				.map(file -> new JavaCompilationUnit(file))
+				.collect(Collectors.toList());
 	}
 	
 	@Override
