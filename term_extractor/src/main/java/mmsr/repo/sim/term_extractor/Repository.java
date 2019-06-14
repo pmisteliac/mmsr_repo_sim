@@ -2,11 +2,11 @@ package mmsr.repo.sim.term_extractor;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
-import com.github.javaparser.ast.CompilationUnit;
 
 public final class Repository {
 	
@@ -30,6 +30,12 @@ public final class Repository {
 		return this.getAllJavaFilePaths().stream()
 				.map(file -> new JavaCompilationUnit(file))
 				.collect(Collectors.toList());
+	}
+	
+	public Set<String> getAllTerms() {
+		return this.getAllJavaCompilationUnits().stream()
+				.flatMap(cu -> cu.getTerms().stream())
+				.collect(Collectors.toSet());
 	}
 	
 	@Override

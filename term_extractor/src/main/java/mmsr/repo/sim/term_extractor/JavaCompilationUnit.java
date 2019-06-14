@@ -3,6 +3,7 @@ package mmsr.repo.sim.term_extractor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,13 @@ public class JavaCompilationUnit {
 		return compilationUnit.findAll(MethodDeclaration.class).stream()
         .map(type -> type.getNameAsString())
         .collect(Collectors.toList());
+	}
+	
+	public List<String> getTerms() {
+		List<String> terms = new ArrayList<>();
+		terms.addAll(getTypeNames());
+		terms.addAll(getMethodNames());
+		return terms;
 	}
 
 }
