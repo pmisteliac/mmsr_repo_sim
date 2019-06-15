@@ -33,13 +33,13 @@ def computeCoherenceScores(topicModel, dictionary, features):
 
 
 def plot(topicCounts, coherenceScores, perplexityScores):
-    plotter.plot(topicCounts, coherenceScores)
+    plotter.semilogx(topicCounts, coherenceScores, basex=2)
     plotter.xlabel("# Topics")
     plotter.ylabel("Coherence Score")
     plotter.legend("coherence scores", loc='best')
     plotter.show()
 
-    plotter.plot(topicCounts, perplexityScores)
+    plotter.semilogx(topicCounts, perplexityScores, basex=2)
     plotter.xlabel("# Topics")
     plotter.ylabel("Perplexity Score")
     plotter.legend("perplexity scores", loc='best')
