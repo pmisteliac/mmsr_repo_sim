@@ -1,15 +1,14 @@
 # Gensim
-from gensim.models import CoherenceModel, ldamodel
+from gensim.models import CoherenceModel, ldamodel, wrappers
 # Custom
 from CorpusBuilder import buildCorpus
 from Preprocessor import preProcess
-from Evaluation import evaluateModels
 # Other
 from typing import List, Any
 import math
+import os
 
-
-def modelTopics(featureLists: List[List[str]], topicMin = 2, topicLimit = 256) -> List[List[str]]:
+def modelTopics(featureLists: List[List[str]], topicMin = 2, topicLimit = 256):
     print('\nRaw input:', featureLists)
 
     processedFeatures = preProcess(featureLists)
@@ -19,12 +18,14 @@ def modelTopics(featureLists: List[List[str]], topicMin = 2, topicLimit = 256) -
     print('\nCorpus (Dictionary, Bag of Words):', corpus)
 
     topicCounts = [1 << exponent for exponent in range(int(math.log(topicMin, 2)), int(math.log(topicLimit, 2)) + 1)]
+
+    # topicModels = generateTopicModelsMallet(dictionary, corpus, topicCounts)
     topicModels = generateTopicModels(dictionary, corpus, topicCounts)
 
-    evaluateModels(topicModels, dictionary, corpus, processedFeatures, topicCounts)
+    return topicModels, dictionary, corpus, processedFeatures, topicCounts
 
 
-def generateTopicModels( dictionary, bow, topicCounts):
+def generateTopicModels(dictionary, bow, topicCounts):
     models = []
     for amountTopics in topicCounts:
         ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', per_word_topics=True)
@@ -32,12 +33,13 @@ def generateTopicModels( dictionary, bow, topicCounts):
     return models
 
 
-# Test Input:
-testFeatureList01 = ['client_side', 'server', 'http', 'responseHandler', 'request.empty', 'request', 'open', 'close', 'shutdown', 'a', "isA", "isa"]
-testFeatureList02 = ['ssl', 'http', 'client', 'timeout_error', 'connection', 'request', 'API', 'restful', 'none', "is"]
-testFeatureLists = [testFeatureList01, testFeatureList02]
-
-
-# execute in parallel, otherwise it taks to long
-if __name__ == '__main__':
-    modelTopics(testFeatureLists, 2, 256).runInParallel(numProcesses=4, numThreads=8)
+# buggy on windows systems, because gensim cannot resolve windows path properly
+def generateTopicModelsMallet(dictionary, bow, topicCounts):
+    pathMalletEnvironment = os.path.abspath('C:/Users/Jan/mallet-2.0.8')
+    os.environ['MALLET_HOME'] = pathMalletEnvironment
+    pathMallet = os.path.abspath('C:/Users/Jan/mallet-2.0.8/bin/mallet')
+    models = []
+    for amountTopics in topicCounts:
+        ldamallet = wrappers.LdaMallet(pathMallet, corpus=bow, num_topics=amountTopics, id2word=dictionary)
+        models.append((amountTopics, ldamallet))
+    return models
