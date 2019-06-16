@@ -2,23 +2,21 @@ from gensim.models import CoherenceModel, ldamodel
 import matplotlib.pyplot as plotter
 
 
-def evaluateModels(topicModels, dictionary, corpus, features, topicCounts):
+# evaluate the topic model by calculating coherence and perplexity scores
+def evaluateModels(topicModels, dictionary, corpus, features):
     coherenceScores = []
     perplexityScores = []
-    for (amountTopics, topicModel) in topicModels:
-        perplexityScore, coherenceScore = evaluateModel(topicModel, dictionary, corpus, features, amountTopics)
+    for topicModel in topicModels:
+        perplexityScore, coherenceScore = evaluateModel(topicModel, dictionary, corpus, features)
         coherenceScores.append(coherenceScore)
         perplexityScores.append(perplexityScore)
 
-    plot(topicCounts, coherenceScores, perplexityScores)
+    return coherenceScores, perplexityScores
 
 
-def evaluateModel(topicModel, dict, bow, features, amountTopics):
-    print('\nTopic Model with ', amountTopics, " topics: ", topicModel.print_topics())
+def evaluateModel(topicModel, dict, bow, features):
     perplexityScore = computePerplexityScore(topicModel, bow)
-    print('Perplexity Score: ', perplexityScore)
     coherenceScore = computeCoherenceScores(topicModel, dict, features)
-    print('Coherence Score: ', coherenceScore)
     return perplexityScore, coherenceScore
 
 
@@ -32,16 +30,22 @@ def computeCoherenceScores(topicModel, dictionary, features):
     return coherenceModel.get_coherence()
 
 
-def plot(topicCounts, coherenceScores, perplexityScores):
-    plotter.semilogx(topicCounts, coherenceScores, basex=2)
+# select the best topic model from the given models for a specific corpus
+def selectTopicModel(topicModels, coherenceScores):
+    bestIndex = coherenceScores.index(min(coherenceScores))
+    return topicModels[bestIndex]
+
+
+def plot(name, topicCount, coherenceScores, perplexityScores):
+    plotter.semilogx(topicCount, coherenceScores, basex=2)
     plotter.xlabel("# Topics")
     plotter.ylabel("Coherence Score")
-    plotter.legend("coherence scores", loc='best')
+    plotter.legend(name + " coherence scores", loc='best')
     plotter.show()
 
-    plotter.semilogx(topicCounts, perplexityScores, basex=2)
+    plotter.semilogx(topicCount, perplexityScores, basex=2)
     plotter.xlabel("# Topics")
     plotter.ylabel("Perplexity Score")
-    plotter.legend("perplexity scores", loc='best')
+    plotter.legend(name + " perplexity scores", loc='best')
     plotter.show()
 
