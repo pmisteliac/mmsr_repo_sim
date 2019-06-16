@@ -1,5 +1,6 @@
 from Evaluation import evaluateModels
 from TopicModeler import modelTopics
+from Similarity import calculateJaccardSimilarity
 
 # Test Input:
 testFeatureList01 = ['client_side', 'server', 'http', 'responseHandler', 'request.empty', 'request', 'open', 'close', 'shutdown', 'a', "isA", "isa"]
