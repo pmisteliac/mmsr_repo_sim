@@ -1,7 +1,7 @@
 from Evaluation import evaluateModels, plot, selectTopicModel
 from TopicModeler import modelTopics
 from Similarity import calculateSimilarity
-from Importer import read
+from Importer import read, write
 
 
 # Test Input:
@@ -19,7 +19,7 @@ testFeatureLists02 = [testFeatureList03, testFeatureList04]
 testFeatureLists03 = [testFeatureList05, testFeatureList06]
 
 
-def run(names, documentFeatureLists):
+def run(description, names, documentFeatureLists):
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 8)
@@ -34,13 +34,17 @@ def run(names, documentFeatureLists):
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
+
     print(similarityMatrix)
+    write("similarityMatrix.csv", similarityMatrix)
     print(parameters)
+    write("parameters.csv", parameters)
     print(silhouetteScores)
+    write("silhouetteScores.csv", [str(score) for score in silhouetteScores])
 
 
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
     names, repositoryFeatures = read("repos.csv")
-    run(names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
+    run("01_18-06", names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
 
