@@ -59,7 +59,8 @@ def splitDot(term: str) -> List[str]:
 def removeStopWords(termList: List[str]) -> List[str]:
     cleanEnglish = removeStopWordsEnglish(termList)
     cleanJava = removeStopWordsJava(cleanEnglish)
-    return cleanJava
+    longTerms = removeShortWords(cleanJava)
+    return longTerms
 
 
 # remove all english stop words from the given list of terms, e.g. is, a, the
@@ -75,6 +76,11 @@ def removeStopWordsJava(termList: List[str]) -> List[str]:
                     'byte', 'case', 'catch', 'char', 'class', 'continue', 'default', 'split', 'open', 'close', 'None',
                     'Null', 'List', 'handler', 'empty', 'instance', 'of', 'exception', 'error', 'manager'])
     return removeStopWordsCustom(termList, stopListJava)
+
+
+# remove all words with length 2 or shorter
+def removeShortWords(termList: List[str]) -> List[str]:
+    return [term for term in termList if not len(term) < 3]
 
 
 def removeStopWordsCustom(termList: List[str], stopWordList: List[str]) -> List[str]:

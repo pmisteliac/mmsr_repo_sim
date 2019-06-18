@@ -21,12 +21,10 @@ testFeatureLists03 = [testFeatureList05, testFeatureList06]
 
 def run(description, names, documentFeatureLists):
     experimentPath = "results/" + description
-    createDir(experimentPath)
 
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 8)
-    write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores, perplexityScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -39,12 +37,15 @@ def run(description, names, documentFeatureLists):
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
 
+    # results
+    createDir(experimentPath)
     print(similarityMatrix)
     write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
     print(parameters)
     write(experimentPath + "/parameters.csv", parameters)
     print(silhouetteScores)
     write(experimentPath + "/silhouetteScores.csv", [str(score) for score in silhouetteScores])
+    write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
 
 
 # execute in parallel, otherwise it takes to long
@@ -54,6 +55,6 @@ if __name__ == '__main__':
     inputPath = os.path.abspath(inputPathRaw)
 
     names, repositoryFeatures = read(inputPath)
-    experimentDescription = "01_18-06"
+    experimentDescription = "02_18-06"
     run(experimentDescription, names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
 
