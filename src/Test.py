@@ -2,6 +2,7 @@ from Evaluation import evaluateModels, plot, selectTopicModel
 from TopicModeler import modelTopics
 from Similarity import calculateSimilarity
 from CsvHelper import read, write, createDir
+from Validator import validateTopicModel
 import os
 
 # Test Input:
@@ -19,11 +20,12 @@ testFeatureLists02 = [testFeatureList03, testFeatureList04]
 testFeatureLists03 = [testFeatureList05, testFeatureList06]
 
 
-def run(description, names, documentFeatureLists):
+def run(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
     experimentPath = "results/" + description
 
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
+    documentFeatureLists = valiationFeatureLists + trainingFeatureLists
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 16)
 
     # evaluate the generated models to find the best one
@@ -36,6 +38,13 @@ def run(description, names, documentFeatureLists):
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
+
+    idNameValidationDict = dict()
+    for index in range(len(validationNames)):
+        idNameValidationDict[index] = validationNames[index]
+    accuracy = validateTopicModel(similarityMatrix, idNameValidationDict)
+
+    print(accuracy)
 
     # results
     createDir(experimentPath)
@@ -57,6 +66,6 @@ if __name__ == '__main__':
     inputPathRaw = os.path.join(currentDir, '..', 'term_extractor/result/repos.csv')
     inputPath = os.path.abspath(inputPathRaw)
 
-    names, repositoryFeatures = read(inputPath)
+    validationNames, validationFeatures = read(inputPath)
     experimentDescription = "02_18-06"
-    run(experimentDescription, names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
+    run(experimentDescription, [], validationNames, [], validationFeatures).runInParallel(numProcesses=4, numThreads=8)
