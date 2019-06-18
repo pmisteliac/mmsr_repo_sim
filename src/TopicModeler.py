@@ -26,9 +26,10 @@ def modelTopics(featureLists: List[List[List[str]]], topicMin = 2, topicLimit = 
 
 def generateTopicModels(dictionary, bow, topicCounts):
     models = []
-    alphas = ['auto' for _ in topicCounts]
-    betas = alphas
+    alphas = []
+    betas = []
     for amountTopics in topicCounts:
+
         ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', eta='auto', per_word_topics=True)
         models.append(ldaModel)
     return models, alphas, betas
