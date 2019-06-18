@@ -15,7 +15,7 @@ def validateTopicModel(similarityMatrix, idNameDictionary) -> float:
         repositoryName = idNameDictionary[repositoryIndex]
 
         # get the n most similar repositories to the current one, with n beeing the number of expected similar repositories plus 1
-        n = len(getValidatedSimilarRepository(repositoryName)) + 1
+        n = len(getValidatedSimilarRepository(repositoryName))
         topTenSimilarRepositoryIndices = getNmostSimilarRepositories(similarityMatrix, repositoryIndex, n)
         topTenSimilarRepositories = [idNameDictionary[index] for index in topTenSimilarRepositoryIndices]
 

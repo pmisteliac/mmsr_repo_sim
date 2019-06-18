@@ -14,7 +14,7 @@ def read(filepath):
             names.append(row[0])
             features.append(row[1:])
 
-        print("Red ",  filepath)
+        print("Red file:",  filepath)
         return names, features
 
 
@@ -23,7 +23,7 @@ def write(filePath, content):
     with open(filePath, mode='w') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
         writer.writerow([element for element in content])
-        print("Wrote to ", filePath)
+        print("Wrote to:", filePath)
 
 
 def createDir(dirPath):

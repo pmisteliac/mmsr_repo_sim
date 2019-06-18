@@ -20,7 +20,7 @@ def run(description, trainingNames, validationNames, trainingFeatureLists, valia
     # plot(parameters, silhouetteScores, "silhouetteScore", "# topics, alpha, beta")
 
     # select the best topic model based in the coherenceScores
-    finalModel = selectTopicModel(topicModels, silhouetteScores)
+    finalModel, modelIndex = selectTopicModel(topicModels, silhouetteScores)
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
@@ -32,21 +32,18 @@ def run(description, trainingNames, validationNames, trainingFeatureLists, valia
 
     # results
     createDir(experimentPath)
-    print('-----------------------RESULTS-----------------------')
-    print('Final Model Accuracy:\n', accuracy)
-    print('Parameters:\n', parameters)
-    print('Silhouette Scores:\n', silhouetteScores)
-    print('Coherence Scores:\n', coherenceScores)
-    print('Final Similarity matrix:\n', similarityMatrix)
-
+    print('\n-----------------------RESULTS-----------------------')
+    print('Model with index', modelIndex, 'has an accuracy of', accuracy)
+    print('Parameters:', parameters[modelIndex])
+    print('Silhouette Score:', silhouetteScores[modelIndex])
+    print('Coherence Score:', coherenceScores[modelIndex])
+    print('\nSimilarity matrix:', similarityMatrix)
+    print('-----------------------FINISH-----------------------\n')
 
     # save experiment data
-    write(experimentPath + "/silhouetteScores.csv", silhouetteScores)
-    write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
-    write(experimentPath + "/parameters.csv", parameters)
-    write(experimentPath + "/coherenceScores.csv", coherenceScores)
+    dumpExperimentResults = [('Model Index', modelIndex), ('Final Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Final Similarity matrix', similarityMatrix)]
+    write(experimentPath + "/results.csv", dumpExperimentResults)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
-    write(experimentPath + "/coherenceScores.csv", coherenceScores)
 
 
 # execute in parallel, otherwise it takes to long

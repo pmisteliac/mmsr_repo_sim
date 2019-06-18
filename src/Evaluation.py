@@ -54,7 +54,7 @@ def cluster(similarityMatrix, topicCount):
 # select the best topic model from the given models for a specific corpus
 def selectTopicModel(topicModels, silhouetteScores):
     bestIndex = silhouetteScores.index(max(silhouetteScores))
-    return topicModels[bestIndex]
+    return topicModels[bestIndex], bestIndex
 
 
 def plot(parameters, scores, scoreDescrption, parameterDescription):
