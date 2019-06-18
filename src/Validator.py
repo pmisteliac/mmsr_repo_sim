@@ -21,7 +21,7 @@ def validateTopicModel(similarityMatrix, idNameDictionary) -> float:
 
         # calculate the ranking accuracy
         accuracy = calculateAccuracy(repositoryName ,topTenSimilarRepositories)
-        print(repositoryName, " is found to be similar to ", topTenSimilarRepositories, " with an accuracy of ", accuracy)
+        # print(repositoryName, " is found to be similar to ", topTenSimilarRepositories, " with an accuracy of ", accuracy)
         accuracySum += accuracy
 
     return accuracySum/ len(idNameDictionary)
