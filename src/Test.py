@@ -21,18 +21,21 @@ testFeatureLists03 = [testFeatureList05, testFeatureList06]
 def run(names, documentFeatureLists):
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
-    topicModels, dictionary, corpus, repositoryFeatures, topicCounts = modelTopics(documentFeatureLists, 4, 4)
+    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 2)
 
     # evaluate the generated models to find the best one
-    coherenceScores, perplexityScores = evaluateModels(topicModels, dictionary, corpus, repositoryFeatures)
-    # plot(name, topicCounts, coherenceScores, perplexityScores)
+    silhouetteScores, coherenceScores, perplexityScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
+    parameters = [str(topicCount) + "; " + alpha + "; " + beta for topicCount, alpha, beta in zip(topicCounts, alphas, betas)]
+    # plot(parameters, silhouetteScores, "silhouetteScore", "# topics, alpha, beta")
 
     # select the best topic model based in the coherenceScores
-    finalModel = selectTopicModel(topicModels, coherenceScores)
+    finalModel = selectTopicModel(topicModels, silhouetteScores)
 
     # create a similarity matrix for all documents in the topic model
-    similarityMatrix = calculateSimilarity(names, finalModel, corpus)
+    similarityMatrix = calculateSimilarity(finalModel, corpus)
     print(similarityMatrix)
+    print(parameters)
+    print(silhouetteScores)
 
 
 # execute in parallel, otherwise it takes to long

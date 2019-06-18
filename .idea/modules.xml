@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MMSR - SoftwareSimilarity.iml" filepath="$PROJECT_DIR$/MMSR - SoftwareSimilarity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mmsr_repo_sim.iml" filepath="$PROJECT_DIR$/mmsr_repo_sim.iml" />
     </modules>
   </component>
 </project>

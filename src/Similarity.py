@@ -5,8 +5,8 @@ import gensim
 
 # create a similarity matrix for all of the topic models
 # the matrix is a sparsely populated diagonal matrix
-def calculateSimilarity(names, finalModel, corpus):
-    modelSize: int = len(names)
+def calculateSimilarity(finalModel, corpus):
+    modelSize = len(corpus)
     similarityMatrix = np.zeros(shape = (modelSize, modelSize), dtype = float)
 
     for currentDocumentIndex in range(modelSize):
@@ -30,8 +30,8 @@ def calculateSimilarity(names, finalModel, corpus):
 # calculate the similarity of two lists with Jaccard-Coefficient
 # the return values ranges from 0 to 1, higher values are more similar
 def calculateJaccardSimilarity(topicSetLeft: List[Any], topicSetRight: List[Any]) -> float:
-    combinedElements: int = len(union(topicSetLeft, topicSetRight))
-    commonElements: int = len(intersection(topicSetLeft, topicSetRight))
+    combinedElements: Int = len(union(topicSetLeft, topicSetRight))
+    commonElements: Int = len(intersection(topicSetLeft, topicSetRight))
     similarity = (commonElements / combinedElements)
 
     return similarity

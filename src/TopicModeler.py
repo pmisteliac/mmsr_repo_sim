@@ -24,17 +24,19 @@ def modelTopics(featureLists: List[List[List[str]]], topicMin = 2, topicLimit = 
     print('\nCorpus (Dictionary, Bag of Words):', corpus)
 
     topicCounts = [1 << exponent for exponent in range(int(math.log(topicMin, 2)), int(math.log(topicLimit, 2)) + 1)]
-    topicModels = generateTopicModels(dictionary, corpus, topicCounts)
+    topicModels, alphas, betas = generateTopicModels(dictionary, corpus, topicCounts)
 
-    return topicModels, dictionary, corpus, processedFeatures, topicCounts
+    return topicModels, dictionary, corpus, processedFeatures, topicCounts, alphas, betas
 
 
 def generateTopicModels(dictionary, bow, topicCounts):
     models = []
+    alphas = ['auto' for _ in topicCounts]
+    betas = alphas
     for amountTopics in topicCounts:
-        ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', per_word_topics=True)
+        ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', eta='auto', per_word_topics=True)
         models.append(ldaModel)
-    return models
+    return models, alphas, betas
 
 
 # buggy on windows systems, because gensim cannot resolve windows path properly
