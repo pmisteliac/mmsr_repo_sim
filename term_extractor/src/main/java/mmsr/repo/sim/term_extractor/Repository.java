@@ -27,6 +27,10 @@ public final class Repository {
 		return javaFiles;
 	}
 	
+	public int getRepoSize() {
+		return getAllJavaFilePaths().size();
+	}
+	
 	public Collection<JavaCompilationUnit> getAllJavaCompilationUnits() {
 		return this.getAllJavaFilePaths().stream()
 				.map(file -> new JavaCompilationUnit(file))
@@ -40,7 +44,7 @@ public final class Repository {
 	}
 	
 	public String getCsvRepresentation() {
-		String name = this.name + ";";
+		String name = this.name + ",";
 		List<String> terms = getAllTerms();
 		return name + String.join(";", terms);
 	}
