@@ -71,10 +71,15 @@ def removeStopWordsEnglish(termList: List[str]) -> List[str]:
 
 # remove all java specific stop words from the given list of terms, e.g. get or set
 def removeStopWordsJava(termList: List[str]) -> List[str]:
-    stopListJava = toLower(['return', 'get', 'set', 'object', 'class', 'import', 'delete', 'remove', 'isA', 'typeOf', 'of',
+    stopListJava = toLower(['return', 'get', 'set', 'object', 'class', 'import', 'delete', 'remove', 'isA', 'typeOf',
                     'type', 'create', 'build', 'find', 'print', 'debug', 'abstract', 'assert', 'boolean', 'break',
                     'byte', 'case', 'catch', 'char', 'class', 'continue', 'default', 'split', 'open', 'close', 'None',
-                    'Null', 'List', 'handler', 'empty', 'instance', 'of', 'exception', 'error', 'manager'])
+                    'Null', 'List', 'handler', 'empty', 'instance', 'exception', 'error', 'manager',
+                    'params', 'init', 'String', 'begin', 'end', 'clear', 'to', 'test', 'main', 'Array', 'Map', 'Set', 'is',
+                    'Logger', 'Log', 'Factory', 'Observer', 'Instance', 'run', 'exec', 'calc', 'Service', 'thread', 'async',
+                    'Application', 'App', 'Util', 'Utility', 'check', 'update', 'value', 'executor', 'interface', 'key',
+                    'next', 'previous', 'non', 'current', 'Adapter', 'Tree', 'Model', 'nullable', 'validate', 'use', 'context',
+                    'builder', 'not', 'mock', 'equals', 'has', 'bean', 'config'])
     return removeStopWordsCustom(termList, stopListJava)
 
 
