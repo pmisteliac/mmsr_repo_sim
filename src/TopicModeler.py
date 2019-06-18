@@ -11,17 +11,12 @@ import os
 
 
 def modelTopics(featureLists: List[List[List[str]]], topicMin = 2, topicLimit = 256):
-    print('\nRaw input:', featureLists)
-
     # combine all terms from a single repository into one document/ term list in order to compare the repositories later easily
     combinedFeatureLists = [flatten(featureList) for featureList in featureLists]
-    print('\nCombined input:', combinedFeatureLists)
 
     processedFeatures = preProcess(combinedFeatureLists)
-    print('\nPre processed input:', processedFeatures)
 
     dictionary, corpus = buildCorpus(processedFeatures)
-    print('\nCorpus (Dictionary, Bag of Words):', corpus)
 
     topicCounts = [1 << exponent for exponent in range(int(math.log(topicMin, 2)), int(math.log(topicLimit, 2)) + 1)]
     topicModels, alphas, betas = generateTopicModels(dictionary, corpus, topicCounts)
@@ -31,9 +26,10 @@ def modelTopics(featureLists: List[List[List[str]]], topicMin = 2, topicLimit = 
 
 def generateTopicModels(dictionary, bow, topicCounts):
     models = []
-    alphas = ['auto' for _ in topicCounts]
-    betas = alphas
+    alphas = []
+    betas = []
     for amountTopics in topicCounts:
+
         ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', eta='auto', per_word_topics=True)
         models.append(ldaModel)
     return models, alphas, betas

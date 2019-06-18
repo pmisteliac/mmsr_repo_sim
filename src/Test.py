@@ -1,8 +1,8 @@
 from Evaluation import evaluateModels, plot, selectTopicModel
 from TopicModeler import modelTopics
 from Similarity import calculateSimilarity
-from Importer import read
-
+from CsvHelper import read, write, createDir
+import os
 
 # Test Input:
 testFeatureList01 = ['client_side', 'server', 'http', 'responseHandler', 'request.empty', 'request', 'open', 'close', 'shutdown', 'a', "isA", "isa"]
@@ -19,7 +19,9 @@ testFeatureLists02 = [testFeatureList03, testFeatureList04]
 testFeatureLists03 = [testFeatureList05, testFeatureList06]
 
 
-def run(names, documentFeatureLists):
+def run(description, names, documentFeatureLists):
+    experimentPath = "results/" + description
+
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 8)
@@ -34,13 +36,25 @@ def run(names, documentFeatureLists):
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
+
+    # results
+    createDir(experimentPath)
     print(similarityMatrix)
+    write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
     print(parameters)
+    write(experimentPath + "/parameters.csv", parameters)
     print(silhouetteScores)
+    write(experimentPath + "/silhouetteScores.csv", [str(score) for score in silhouetteScores])
+    write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
 
 
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
-    names, repositoryFeatures = read("repos.csv")
-    run(names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
+    currentDir = os.path.dirname( __file__ )
+    inputPathRaw = os.path.join(currentDir, '..', 'term_extractor/result/repos.csv')
+    inputPath = os.path.abspath(inputPathRaw)
+
+    names, repositoryFeatures = read(inputPath)
+    experimentDescription = "02_18-06"
+    run(experimentDescription, names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
 
