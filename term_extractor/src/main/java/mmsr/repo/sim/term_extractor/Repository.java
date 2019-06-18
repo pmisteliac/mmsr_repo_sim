@@ -44,7 +44,7 @@ public final class Repository {
 	}
 	
 	public String getCsvRepresentation() {
-		String name = this.name + ";";
+		String name = this.name + ",";
 		List<String> terms = getAllTerms();
 		return name + String.join(";", terms);
 	}
