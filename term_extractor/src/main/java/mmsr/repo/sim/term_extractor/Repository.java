@@ -2,6 +2,7 @@ package mmsr.repo.sim.term_extractor;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,16 @@ public final class Repository {
 				.collect(Collectors.toList());
 	}
 	
-	public Set<String> getAllTerms() {
+	public List<String> getAllTerms() {
 		return this.getAllJavaCompilationUnits().stream()
 				.flatMap(cu -> cu.getTerms().stream())
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
+	}
+	
+	public String getCsvRepresentation() {
+		String name = this.name + ";";
+		List<String> terms = getAllTerms();
+		return name + String.join(";", terms);
 	}
 	
 	@Override

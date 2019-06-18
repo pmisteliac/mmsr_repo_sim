@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
 public class JavaCompilationUnit {
@@ -42,7 +44,21 @@ public class JavaCompilationUnit {
 	
 	public List<String> getMethodNames() {
 		return compilationUnit.findAll(MethodDeclaration.class).stream()
-        .map(type -> type.getNameAsString())
+        .map(method -> method.getNameAsString())
+        .collect(Collectors.toList());
+	}
+	
+	public List<String> getFieldNames() {
+		return compilationUnit.findAll(FieldDeclaration.class).stream()
+        .flatMap(field -> field.getVariables().stream())
+        .map(variable -> variable.getNameAsString())
+        .collect(Collectors.toList());
+	}
+	
+	public List<String> getImportNames() {
+		return compilationUnit.findAll(ImportDeclaration.class).stream()
+		.filter(importDecl -> !importDecl.isAsterisk())
+        .map(importDecl -> extractImportClassName(importDecl.getNameAsString()))
         .collect(Collectors.toList());
 	}
 	
@@ -50,7 +66,13 @@ public class JavaCompilationUnit {
 		List<String> terms = new ArrayList<>();
 		terms.addAll(getTypeNames());
 		terms.addAll(getMethodNames());
+		terms.addAll(getFieldNames());
+		terms.addAll(getImportNames());
 		return terms;
 	}
-
+	
+	private static String extractImportClassName(String fullyQualifiedImport) {
+		String[] pathParts = fullyQualifiedImport.split("\\.");
+		return pathParts[pathParts.length - 1];
+	}
 }
