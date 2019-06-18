@@ -30,14 +30,14 @@ def validateTopicModel(similarityMatrix, idNameDictionary) -> float:
 # Get the n (default 10) most similar repository indices to the given repository index
 def getNmostSimilarRepositories(similarityMatrix, repositoryIndex, n = 10) -> List[int]:
     similarRepositories = similarityMatrix[repositoryIndex]
-    return similarRepositories.argsort()[-n:]
+    return similarRepositories.argsort()[-n:-1]
 
 
 # calculate how many of the expected repositors where in the top n similar repositories and give the result as a percentage
 def calculateAccuracy(repositoryName, similarRepositories) -> float:
     expectedRepositores = getValidatedSimilarRepository(repositoryName)
     validatedIntersection = intersection(similarRepositories, expectedRepositores)
-    expectedIntersection = len(expectedRepositores)
+    expectedIntersection = len(expectedRepositores) - 1
     accuracy = len(validatedIntersection)/ expectedIntersection
 
     return accuracy

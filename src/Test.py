@@ -5,20 +5,6 @@ from CsvHelper import read, write, createDir
 from Validator import validateTopicModel
 import os
 
-# Test Input:
-testFeatureList01 = ['client_side', 'server', 'http', 'responseHandler', 'request.empty', 'request', 'open', 'close', 'shutdown', 'a', "isA", "isa"]
-testFeatureList02 = ['ssl', 'http', 'client', 'timeout_error', 'connection', 'request', 'API', 'restful', 'none', "is"]
-
-testFeatureList03 = ['server', 'ssl', 'https', 'requester', 'empty', 'request', 'send', 'receive', 'close', 'await', "respond", "bind"]
-testFeatureList04 = ['route', 'http', 'communication', 'connection', 'timedout', 'pass', 'request', 'HttpRoute', 'startServer', "shutdownServer"]
-
-testFeatureList05 = ['client_side', 'servlet', 'http', 'handler', 'request.empty', 'request', 'ongoing', 'close', 'end', 'a', "isA", "isa"]
-testFeatureList06 = ['tls', 'https', 'clientside', 'timeout_error', 'connection', 'request', 'API', 'restful', 'none', "is"]
-
-testFeatureLists01 = [testFeatureList01, testFeatureList02]
-testFeatureLists02 = [testFeatureList03, testFeatureList04]
-testFeatureLists03 = [testFeatureList05, testFeatureList06]
-
 
 def run(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
     experimentPath = "results/" + description
@@ -44,17 +30,20 @@ def run(description, trainingNames, validationNames, trainingFeatureLists, valia
         idNameValidationDict[index] = validationNames[index]
     accuracy = validateTopicModel(similarityMatrix, idNameValidationDict)
 
-    print(accuracy)
-
     # results
     createDir(experimentPath)
-    print(similarityMatrix)
-    write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
-    print(parameters)
-    write(experimentPath + "/parameters.csv", parameters)
-    print(silhouetteScores)
+    print('-----------------------RESULTS-----------------------')
+    print('Final Model Accuracy:\n', accuracy)
+    print('Parameters:\n', parameters)
+    print('Silhouette Scores:\n', silhouetteScores)
+    print('Coherence Scores:\n', coherenceScores)
+    print('Final Similarity matrix:\n', similarityMatrix)
+
+
+    # save experiment data
     write(experimentPath + "/silhouetteScores.csv", silhouetteScores)
-    print(coherenceScores)
+    write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
+    write(experimentPath + "/parameters.csv", parameters)
     write(experimentPath + "/coherenceScores.csv", coherenceScores)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
     write(experimentPath + "/coherenceScores.csv", coherenceScores)
