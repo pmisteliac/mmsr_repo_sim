@@ -21,10 +21,9 @@ def read(filepath):
 # write content to a csv file
 def write(filePath, content):
     with open(filePath, mode='w') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerows(content)
+        writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow([element for element in content])
         print("Wrote to ", filePath)
-
 
 
 def createDir(dirPath):

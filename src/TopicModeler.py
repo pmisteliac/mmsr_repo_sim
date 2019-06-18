@@ -29,9 +29,11 @@ def generateTopicModels(dictionary, bow, topicCounts):
     alphas = []
     betas = []
     for amountTopics in topicCounts:
-
-        ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, alpha='auto', eta='auto', per_word_topics=True)
+        ldaModel = ldamodel.LdaModel(bow, amountTopics, dictionary, passes=20, per_word_topics=False)
         models.append(ldaModel)
+        alphas.append('default')
+        betas.append('default')
+        print('Generated topic model with parameters: ' + "(topics: " + str(amountTopics) + "), (alpha: default" + "), (beta: default)")
     return models, alphas, betas
 
 

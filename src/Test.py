@@ -24,7 +24,7 @@ def run(description, names, documentFeatureLists):
 
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
-    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 8)
+    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 16)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores, perplexityScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -44,8 +44,11 @@ def run(description, names, documentFeatureLists):
     print(parameters)
     write(experimentPath + "/parameters.csv", parameters)
     print(silhouetteScores)
-    write(experimentPath + "/silhouetteScores.csv", [str(score) for score in silhouetteScores])
+    write(experimentPath + "/silhouetteScores.csv", silhouetteScores)
+    print(coherenceScores)
+    write(experimentPath + "/coherenceScores.csv", coherenceScores)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
+    write(experimentPath + "/coherenceScores.csv", coherenceScores)
 
 
 # execute in parallel, otherwise it takes to long
@@ -57,4 +60,3 @@ if __name__ == '__main__':
     names, repositoryFeatures = read(inputPath)
     experimentDescription = "02_18-06"
     run(experimentDescription, names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
-
