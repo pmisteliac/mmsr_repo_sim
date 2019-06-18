@@ -4,7 +4,6 @@ from gensim.models import ldamodel, wrappers
 from CorpusBuilder import buildCorpus
 from Preprocessor import preProcess
 from Utils import flatten
-from Importer import write
 # Other
 from typing import List
 import math
@@ -14,10 +13,8 @@ import os
 def modelTopics(featureLists: List[List[List[str]]], topicMin = 2, topicLimit = 256):
     # combine all terms from a single repository into one document/ term list in order to compare the repositories later easily
     combinedFeatureLists = [flatten(featureList) for featureList in featureLists]
-    write("combinedFeatureLists.csv", combinedFeatureLists)
 
     processedFeatures = preProcess(combinedFeatureLists)
-    write("processedFeatures.csv", processedFeatures)
 
     dictionary, corpus = buildCorpus(processedFeatures)
 

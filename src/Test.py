@@ -1,8 +1,8 @@
 from Evaluation import evaluateModels, plot, selectTopicModel
 from TopicModeler import modelTopics
 from Similarity import calculateSimilarity
-from Importer import read, write
-
+from CsvHelper import read, write, createDir
+import os
 
 # Test Input:
 testFeatureList01 = ['client_side', 'server', 'http', 'responseHandler', 'request.empty', 'request', 'open', 'close', 'shutdown', 'a', "isA", "isa"]
@@ -20,9 +20,13 @@ testFeatureLists03 = [testFeatureList05, testFeatureList06]
 
 
 def run(description, names, documentFeatureLists):
+    experimentPath = "results/" + description
+    createDir(experimentPath)
+
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 8)
+    write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores, perplexityScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -36,15 +40,20 @@ def run(description, names, documentFeatureLists):
     similarityMatrix = calculateSimilarity(finalModel, corpus)
 
     print(similarityMatrix)
-    write("similarityMatrix.csv", similarityMatrix)
+    write(experimentPath + "/similarityMatrix.csv", similarityMatrix)
     print(parameters)
-    write("parameters.csv", parameters)
+    write(experimentPath + "/parameters.csv", parameters)
     print(silhouetteScores)
-    write("silhouetteScores.csv", [str(score) for score in silhouetteScores])
+    write(experimentPath + "/silhouetteScores.csv", [str(score) for score in silhouetteScores])
 
 
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
-    names, repositoryFeatures = read("repos.csv")
-    run("01_18-06", names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
+    currentDir = os.path.dirname( __file__ )
+    inputPathRaw = os.path.join(currentDir, '..', 'term_extractor/result/repos.csv')
+    inputPath = os.path.abspath(inputPathRaw)
+
+    names, repositoryFeatures = read(inputPath)
+    experimentDescription = "01_18-06"
+    run(experimentDescription, names, repositoryFeatures).runInParallel(numProcesses=4, numThreads=8)
 

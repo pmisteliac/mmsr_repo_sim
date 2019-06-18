@@ -1,4 +1,5 @@
 import csv
+import os
 
 
 # read a vsc file with the following format:
@@ -26,3 +27,6 @@ def write(filePath, content):
 
 
 
+def createDir(dirPath):
+    os.mkdir(dirPath)
+    print('Created directory: ' + dirPath)
