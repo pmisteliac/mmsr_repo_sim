@@ -27,6 +27,10 @@ public final class Repository {
 		return javaFiles;
 	}
 	
+	public int getRepoSize() {
+		return getAllJavaFilePaths().size();
+	}
+	
 	public Collection<JavaCompilationUnit> getAllJavaCompilationUnits() {
 		return this.getAllJavaFilePaths().stream()
 				.map(file -> new JavaCompilationUnit(file))
