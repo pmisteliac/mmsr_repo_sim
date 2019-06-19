@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -38,7 +39,8 @@ public final class Repository {
 	
 	public Collection<JavaCompilationUnit> getAllJavaCompilationUnits() {
 		return this.getAllJavaFilePaths().stream()
-				.map(file -> new JavaCompilationUnit(file))
+				.map(file -> JavaCompilationUnit.create(file))
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 	
@@ -49,6 +51,7 @@ public final class Repository {
 	}
 	
 	public String getCsvRepresentation() {
+		System.out.println(this.name);
 		String name = this.name + CSV_DELIMITER;
 		List<String> terms = getAllTerms();
 		return name + String.join(CSV_DELIMITER, terms);
