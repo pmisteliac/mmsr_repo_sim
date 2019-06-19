@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class App {
@@ -13,6 +14,18 @@ public class App {
 	public static final String REPO_DIR = "C:/Temp/git/";
 	
 	public static void main(String[] args) {
+//		tryOutStuff();
+		generateCsv();
+	}
+	
+	private static void tryOutStuff() {
+		Repository repo = createRepo("neo4j-java-driver");
+		Collection<JavaCompilationUnit> allJavaCompilationUnits = repo.getAllJavaCompilationUnits();
+		allJavaCompilationUnits.stream().forEach(cu -> System.out.println(cu.getComments()));
+		System.out.println(repo.getTermOccurances());
+	}
+	
+	private static void generateCsv() {
 		List<Repository> repositories = getRepositories();
 		List<String> repoCsvRows = new ArrayList<>();
 		for (Repository repo : repositories) {

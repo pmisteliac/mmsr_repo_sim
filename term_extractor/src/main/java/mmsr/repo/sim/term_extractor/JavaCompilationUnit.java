@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -62,12 +63,21 @@ public class JavaCompilationUnit {
         .collect(Collectors.toList());
 	}
 	
+	public List<String> getComments() {
+		return compilationUnit.getAllContainedComments().stream()
+				.map(comment -> comment.getContent())
+				.flatMap(comment -> Stream.of(comment.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ")))
+				.filter(comment -> !comment.isEmpty())
+				.collect(Collectors.toList());
+	}
+	
 	public List<String> getTerms() {
 		List<String> terms = new ArrayList<>();
 		terms.addAll(getTypeNames());
 		terms.addAll(getMethodNames());
 		terms.addAll(getFieldNames());
 		terms.addAll(getImportNames());
+		terms.addAll(getComments());
 		return terms;
 	}
 	
