@@ -10,14 +10,12 @@ from Similarity import calculateSimilarity
 def evaluateModels(topicModels, topicCounts, dictionary, corpus, features):
     coherenceScores = []
     silhouetteScores = []
-    perplexityScores = []
     for topicModel, topicCount in zip(topicModels, topicCounts):
         silhouetteScore, perplexityScore, coherenceScore = evaluateModel(topicModel, topicCount, dictionary, corpus, features)
         coherenceScores.append(coherenceScore)
-        perplexityScores.append(perplexityScore)
         silhouetteScores.append(silhouetteScore)
 
-    return silhouetteScores, coherenceScores, perplexityScores
+    return silhouetteScores, coherenceScores
 
 
 def evaluateModel(topicModel,topicCount, dict, bow, features):

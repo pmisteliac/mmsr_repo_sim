@@ -6,7 +6,7 @@ import os
 # first column of each row is the name of the repository
 # other columns of each row represent all features of the repository
 def read(filepath):
-    with open(filepath) as csvfile:
+    with open(filepath, encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         names = []
         features = []
@@ -20,7 +20,7 @@ def read(filepath):
 
 # write content to a csv file
 def write(filePath, content):
-    with open(filePath, mode='w') as csvfile:
+    with open(filePath, mode='w', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
         writer.writerow([element for element in content])
         print("Wrote to:", filePath)

@@ -4,19 +4,21 @@ from CsvHelper import read
 from Validator import validateTopicModel
 
 
-def randomTest(validationNames, iterations = 1000):
+def randomTest(trainingNames, validationNames, iterations = 1000):
     accuracy = 0
-    idNameValidationDict = dict()
-    for index in range(len(validationNames)):
-        idNameValidationDict[index] = validationNames[index]
+
+    combinedNames = validationNames + trainingNames
+    idNameDict = dict()
+    for index in range(len(combinedNames)):
+        idNameDict[index] = combinedNames[index]
 
     for _ in range(iterations):
-        similarityMatrix = numpy.random.rand(len(validationNames), len(validationNames))
+        similarityMatrix = numpy.random.rand(len(combinedNames), len(combinedNames))
         # fill diagonal with ones, for self similarity
-        for i  in range(len(validationNames)):
+        for i in range(len(validationNames)):
             similarityMatrix[i][i] = 1
 
-        accuracy += validateTopicModel(similarityMatrix, idNameValidationDict)
+        accuracy += validateTopicModel(similarityMatrix, idNameDict, range(len(validationNames)))
 
     print("Random accuracy:", accuracy / iterations)
 
@@ -24,9 +26,15 @@ def randomTest(validationNames, iterations = 1000):
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
     currentDir = os.path.dirname( __file__ )
-    inputPathRaw = os.path.join(currentDir, '..', 'term_extractor/result/repos.csv')
-    inputPath = os.path.abspath(inputPathRaw)
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
+    inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
-    validationNames, validationFeatures = read(inputPath)
-    randomTest(validationNames)
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
+    inputPathTraining = os.path.abspath(inputPathTrainingRaw)
+
+    validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
+    validationNames, validationFeatures = read(inputPathCurated)
+    trainingNames, trainingFeatures =  read(inputPathTraining)
+
+    randomTest(trainingNames, validationNames)
 

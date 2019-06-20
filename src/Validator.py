@@ -8,15 +8,15 @@ from Utils import flatten
 # dictionary of all names of the repository in the topic model, mapping the id of the repository document in the similarity matrix to the name of the repository
 # Returns a validation score from 0 - 1, higher is better
 # the validation score, represents the percentage of correct similarity rankings for each repository of the validation corpus
-def validateTopicModel(similarityMatrix, idNameDictionary) -> float:
+def validateTopicModel(similarityMatrix, idNameDictionary, validationIndices) -> float:
     accuracySum = 0
 
-    for repositoryIndex in idNameDictionary:
-        repositoryName = idNameDictionary[repositoryIndex]
+    for validationIndex in validationIndices:
+        repositoryName = idNameDictionary[validationIndex]
 
         # get the n most similar repositories to the current one, with n beeing the number of expected similar repositories plus 1
         n = len(getValidatedSimilarRepository(repositoryName))
-        topTenSimilarRepositoryIndices = getNmostSimilarRepositories(similarityMatrix, repositoryIndex, n)
+        topTenSimilarRepositoryIndices = getNmostSimilarRepositories(similarityMatrix, validationIndex, n)
         topTenSimilarRepositories = [idNameDictionary[index] for index in topTenSimilarRepositoryIndices]
 
         # calculate the ranking accuracy
