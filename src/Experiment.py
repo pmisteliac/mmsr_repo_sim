@@ -21,7 +21,7 @@ def experiment():
     trainingNames, trainingFeatures =  read(inputPathTraining)
     for i in range(17,22):
         now = datetime.datetime.now()
-        dateTime = now.strftime("%d-%m-%Y-%H:%M")
+        dateTime = now.strftime("%d-%m-%Y-%H-%M")
         experimentDescription = str(i) + '_' + dateTime + "_FullCorpus-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
@@ -77,7 +77,7 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
 
 
     # save experiment data
-    dumpExperimentResults = [('Model Index', modelIndex), ('Execution Time', executionTime), ('Final Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Final Similarity matrix', similarityMatrix)]
+    dumpExperimentResults = [('Model Index', modelIndex), ('Execution Time', executionTime), ('Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Similarity Matrix', similarityMatrix)]
     write(experimentPath + "/results.csv", dumpExperimentResults)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
     print('-----------------------FINISH-----------------------\n')
