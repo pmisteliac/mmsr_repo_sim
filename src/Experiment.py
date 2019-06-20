@@ -5,6 +5,7 @@ from CsvHelper import read, write, createDir
 from Validator import validateTopicModel
 import os
 import time
+import datetime
 
 
 def experiment():
@@ -19,7 +20,9 @@ def experiment():
     validationNames, validationFeatures = read(inputPathCurated)
     trainingNames, trainingFeatures =  read(inputPathTraining)
     for i in range(17,22):
-        experimentDescription = str(i) + "_20-07-Full-NoComments"
+        now = datetime.datetime.now()
+        dateTime = now.strftime("%d-%m-%Y-%H:%M")
+        experimentDescription = str(i) + '_' + dateTime + "_FullCorpus-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
