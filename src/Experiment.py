@@ -9,7 +9,7 @@ import time
 
 def experiment():
     currentDir = os.path.dirname( __file__ )
-    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos_nocom.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
     inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
@@ -18,8 +18,8 @@ def experiment():
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(11,16):
-        experimentDescription = str(i) + "_20-07-Validation-Comments"
+    for i in range(17,21):
+        experimentDescription = str(i) + "_20-07-Full-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
