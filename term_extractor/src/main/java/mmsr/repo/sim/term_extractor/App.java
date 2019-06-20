@@ -18,7 +18,8 @@ public class App {
 	 * VM Arguments: -Xmx4g -Xmx8g -XX:+UseG1GC
 	 */
 	public static void main(String[] args) {
-		generateCsv(getAllRepositories(), "repos");
+		generateCsv(getCuratedRepositories(), "curated_repos_nocom");
+		generateCsv(getTopRepositories(), "top_repos_nocom");
 	}
 	
 	private static void generateCsv(List<Repository> repositories, String fileName) {

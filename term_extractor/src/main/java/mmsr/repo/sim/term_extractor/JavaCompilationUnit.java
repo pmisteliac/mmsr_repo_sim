@@ -68,7 +68,7 @@ public class JavaCompilationUnit {
 		terms.addAll(getMethodNames());
 		terms.addAll(getFieldNames());
 		terms.addAll(getImportNames());
-		terms.addAll(getComments());
+//		terms.addAll(getComments());
 		return terms;
 	}
 	
