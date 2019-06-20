@@ -26,10 +26,10 @@ def randomTest(trainingNames, validationNames, iterations = 1000):
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
     currentDir = os.path.dirname( __file__ )
-    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos_nocom.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
-    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
     inputPathTraining = os.path.abspath(inputPathTrainingRaw)
 
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []

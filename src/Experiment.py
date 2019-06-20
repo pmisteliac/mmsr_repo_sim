@@ -7,7 +7,23 @@ import os
 import time
 
 
-def run(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
+def experiment():
+    currentDir = os.path.dirname( __file__ )
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
+    inputPathCurated = os.path.abspath(inputPathCuratedRaw)
+
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
+    inputPathTraining = os.path.abspath(inputPathTrainingRaw)
+
+    validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
+    validationNames, validationFeatures = read(inputPathCurated)
+    # trainingNames, trainingFeatures =  read(inputPathTraining)
+    for i in range(11,16):
+        experimentDescription = str(i) + "_20-07-Validation-Comments"
+        pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
+
+
+def pipeline(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
     startTime = time.time()
 
     experimentPath = "results/" + description
@@ -16,7 +32,7 @@ def run(description, trainingNames, validationNames, trainingFeatureLists, valia
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     documentFeatureLists = valiationFeatureLists + trainingFeatureLists
     repositoryNames = validationNames + trainingNames
-    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 16, 64)
+    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 16)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -57,16 +73,5 @@ def run(description, trainingNames, validationNames, trainingFeatureLists, valia
 
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
-    currentDir = os.path.dirname( __file__ )
-    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
-    inputPathCurated = os.path.abspath(inputPathCuratedRaw)
-
-    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
-    inputPathTraining = os.path.abspath(inputPathTrainingRaw)
-
-    validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
-    validationNames, validationFeatures = read(inputPathCurated)
-    trainingNames, trainingFeatures =  read(inputPathTraining)
-    experimentDescription = "04_20-06-Full-Comments"
-    run(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures).runInParallel(numProcesses=4, numThreads=8)
+    experiment().runInParallel(numProcesses=4, numThreads=8)
 
