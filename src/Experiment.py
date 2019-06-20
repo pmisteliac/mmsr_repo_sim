@@ -18,12 +18,15 @@ def experiment():
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(17,18):
+    for i in range(16,17):
         experimentDescription = str(i) + "_20-07-Validation-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
 def pipeline(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
+    print('\n-----------------------NEW EXPERIMENT-----------------------')
+    print('\ndescription')
+
     startTime = time.time()
 
     currentDir = os.path.dirname( __file__ )
@@ -35,7 +38,7 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     documentFeatureLists = valiationFeatureLists + trainingFeatureLists
     repositoryNames = validationNames + trainingNames
 
-    topicLimit = min(128, len(repositoryNames))
+    topicLimit = min(128, len(repositoryNames) - 1)
     topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, topicLimit)
 
     # evaluate the generated models to find the best one
@@ -67,12 +70,14 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     print('Silhouette Score:', silhouetteScores[modelIndex])
     print('Coherence Score:', coherenceScores[modelIndex])
     print('\nSimilarity matrix:', similarityMatrix)
-    print('-----------------------FINISH-----------------------\n')
+    print('-----------------------END RESULTS-----------------------\n')
+
 
     # save experiment data
     dumpExperimentResults = [('Model Index', modelIndex), ('Execution Time', executionTime), ('Final Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Final Similarity matrix', similarityMatrix)]
     write(experimentPath + "/results.csv", dumpExperimentResults)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
+    print('-----------------------FINISH-----------------------\n')
 
 
 # execute in parallel, otherwise it takes to long
