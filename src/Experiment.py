@@ -17,15 +17,15 @@ def experiment():
 
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
-    # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(16,17):
-        experimentDescription = str(i) + "_20-07-Validation-NoComments"
+    trainingNames, trainingFeatures =  read(inputPathTraining)
+    for i in range(17,22):
+        experimentDescription = str(i) + "_20-07-Full-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
 def pipeline(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
     print('\n-----------------------NEW EXPERIMENT-----------------------')
-    print('\ndescription')
+    print(description, '\n')
 
     startTime = time.time()
 
