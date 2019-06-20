@@ -12,6 +12,10 @@ def randomTest(validationNames, iterations = 1000):
 
     for _ in range(iterations):
         similarityMatrix = numpy.random.rand(len(validationNames), len(validationNames))
+        # fill diagonal with ones, for self similarity
+        for i  in range(len(validationNames)):
+            similarityMatrix[i][i] = 1
+
         accuracy += validateTopicModel(similarityMatrix, idNameValidationDict)
 
     print("Random accuracy:", accuracy / iterations)
