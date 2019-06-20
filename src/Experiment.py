@@ -18,21 +18,25 @@ def experiment():
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(17,21):
-        experimentDescription = str(i) + "_20-07-Full-NoComments"
+    for i in range(17,18):
+        experimentDescription = str(i) + "_20-07-Validation-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
 def pipeline(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
     startTime = time.time()
 
-    experimentPath = "results/" + description
+    currentDir = os.path.dirname( __file__ )
+    experimentPathRaw = os.path.join(currentDir, '..', "results/" + description)
+    experimentPath = os.path.abspath(experimentPathRaw)
 
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     documentFeatureLists = valiationFeatureLists + trainingFeatureLists
     repositoryNames = validationNames + trainingNames
-    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 16)
+
+    topicLimit = min(128, len(repositoryNames))
+    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, topicLimit)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -42,7 +46,7 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     print('Silhouette Scores:', silhouetteScores)
     print('Coherence Scores:', coherenceScores)
     # select the best topic model based in the coherenceScores
-    finalModel, modelIndex = selectTopicModel(topicModels, silhouetteScores)
+    finalModel, modelIndex = selectTopicModel(topicModels, silhouetteScores, coherenceScores)
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
