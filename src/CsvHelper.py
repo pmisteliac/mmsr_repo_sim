@@ -21,8 +21,10 @@ def read(filepath):
 # write content to a csv file
 def write(filePath, content):
     with open(filePath, mode='w', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow([element for element in content])
+        writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+        for element in content:
+            writer.writerow(element)
+
         print("Wrote to:", filePath)
 
 
