@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -17,19 +18,10 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 public class JavaCompilationUnit {
 	
 	private final CompilationUnit compilationUnit;
-	private final String sourceCode;
 	
-	public JavaCompilationUnit(File file) {
-		try {
-			sourceCode = new String(Files.readAllBytes(file.toPath()));
-			compilationUnit = StaticJavaParser.parse(sourceCode);
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Couldn't read file", e);
-		}
-	}
-
-	public String getSourceCode() {
-		return sourceCode;
+	private JavaCompilationUnit(File file) throws IOException {
+		String sourceCode = new String(Files.readAllBytes(file.toPath()));
+		compilationUnit = StaticJavaParser.parse(sourceCode);
 	}
 
 	public CompilationUnit getCompilationUnit() {
@@ -62,17 +54,36 @@ public class JavaCompilationUnit {
         .collect(Collectors.toList());
 	}
 	
+	public List<String> getComments() {
+		return compilationUnit.getAllContainedComments().stream()
+				.map(comment -> comment.getContent())
+				.flatMap(comment -> Stream.of(comment.replaceAll("[^a-zA-Z ]", "").toLowerCase().split(" ")))
+				.filter(comment -> !comment.isEmpty())
+				.collect(Collectors.toList());
+	}
+	
 	public List<String> getTerms() {
 		List<String> terms = new ArrayList<>();
 		terms.addAll(getTypeNames());
 		terms.addAll(getMethodNames());
 		terms.addAll(getFieldNames());
 		terms.addAll(getImportNames());
+//		terms.addAll(getComments());
 		return terms;
 	}
 	
 	private static String extractImportClassName(String fullyQualifiedImport) {
 		String[] pathParts = fullyQualifiedImport.split("\\.");
 		return pathParts[pathParts.length - 1];
+	}
+	
+	public static JavaCompilationUnit create(File file) {
+		JavaCompilationUnit jcu  = null;
+		try {
+			jcu = new JavaCompilationUnit(file);
+		} catch (Exception e) {
+			
+		}
+		return jcu;
 	}
 }

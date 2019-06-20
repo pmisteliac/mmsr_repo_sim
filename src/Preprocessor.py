@@ -92,7 +92,6 @@ def removeStopWordsCustom(termList: List[str], stopWordList: List[str]) -> List[
     return [term for term in termList if not term.lower() in stopWordList]
 
 
-
 #----STEMMING----
 # stem all terms with the Porter Stemmer, because it was recommended in The impact of Classifier Configuration and Classifier Combination on Bug Localization
 # e.g. configure, configuration, configs -> config

@@ -4,7 +4,7 @@ import gensim
 
 
 # create a similarity matrix for all of the topic models
-# the matrix is a sparsely populated diagonal matrix
+# the matrix is a densely populated diagonal matrix
 def calculateSimilarity(finalModel, corpus):
     modelSize = len(corpus)
     similarityMatrix = np.zeros(shape = (modelSize, modelSize), dtype = float)
@@ -13,13 +13,13 @@ def calculateSimilarity(finalModel, corpus):
         currentDocument = corpus[currentDocumentIndex]
         currentLdaVec = extractTopicDistribution(finalModel, currentDocument)
 
-        for comparisonTopicModelIndex in range(currentDocumentIndex, modelSize):
+        for comparisonTopicModelIndex in range(modelSize):
             comparisonDocument = corpus[comparisonTopicModelIndex]
             comparisonLdaVec = extractTopicDistribution(finalModel, comparisonDocument)
 
-            similarity = calculateKullback_LeiblerSimilarity(currentLdaVec, comparisonLdaVec)
+            # similarity = calculateKullback_LeiblerSimilarity(currentLdaVec, comparisonLdaVec)
             # similarity = calculateJaccardSimilarity(currentLdaVec, comparisonLdaVec)
-            # similarity = calculateHellingerSimilarity(currentLdaVec, comparisonLdaVec, finalModel.num_topics)
+            similarity = calculateHellingerSimilarity(currentLdaVec, comparisonLdaVec, finalModel.num_topics)
             similarityMatrix[currentDocumentIndex, comparisonTopicModelIndex] = similarity
 
     return similarityMatrix
@@ -29,9 +29,9 @@ def calculateSimilarity(finalModel, corpus):
 # pretty buggy so far!
 # calculate the similarity of two lists with Jaccard-Coefficient
 # the return values ranges from 0 to 1, higher values are more similar
-def calculateJaccardSimilarity(topicSetLeft: List[Any], topicSetRight: List[Any]) -> float:
-    combinedElements: Int = len(union(topicSetLeft, topicSetRight))
-    commonElements: Int = len(intersection(topicSetLeft, topicSetRight))
+def calculateJaccardSimilarity(setLeft: List[Any], setRight: List[Any]) -> float:
+    combinedElements: Int = len(union(setLeft, setRight))
+    commonElements: Int = len(intersection(setLeft, setRight))
     similarity = (commonElements / combinedElements)
 
     return similarity
