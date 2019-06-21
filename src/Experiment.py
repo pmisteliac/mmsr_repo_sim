@@ -19,7 +19,7 @@ def experiment():
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(37,42):
+    for i in range(39,42):
         now = datetime.datetime.now()
         dateTime = now.strftime("%d-%m-%Y-%H-%M")
         experimentDescription = str(i) + '_' + dateTime + "Full-NoComments"
