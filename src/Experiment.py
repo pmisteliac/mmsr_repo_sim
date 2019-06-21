@@ -10,16 +10,16 @@ import datetime
 
 def experiment():
     currentDir = os.path.dirname( __file__ )
-    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos_nocom.csv')
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
-    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
     inputPathTraining = os.path.abspath(inputPathTrainingRaw)
 
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(32,37):
+    for i in range(37,42):
         now = datetime.datetime.now()
         dateTime = now.strftime("%d-%m-%Y-%H-%M")
         experimentDescription = str(i) + '_' + dateTime + "Full-NoComments"
