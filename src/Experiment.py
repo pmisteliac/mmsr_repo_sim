@@ -3,13 +3,14 @@ from TopicModeler import modelTopics
 from Similarity import calculateSimilarity
 from CsvHelper import read, write, createDir
 from Validator import validateTopicModel
+from Utils import save_sim_matrix_plot
+
 import os
 import time
 
-
 def experiment():
     currentDir = os.path.dirname( __file__ )
-    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
+    inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos_nocom.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
     inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
@@ -18,7 +19,7 @@ def experiment():
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
     # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(11,16):
+    for i in range(410,416):
         experimentDescription = str(i) + "_20-07-Validation-Comments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
@@ -47,6 +48,7 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
 
+
     idNameDict = dict()
     for index in range(len(documentFeatureLists)):
         idNameDict[index] = repositoryNames[index]
@@ -69,9 +71,9 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     dumpExperimentResults = [('Model Index', modelIndex), ('Execution Time', executionTime), ('Final Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Final Similarity matrix', similarityMatrix)]
     write(experimentPath + "/results.csv", dumpExperimentResults)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
+    save_sim_matrix_plot(similarityMatrix, experimentPath, 'Similarity')
 
 
 # execute in parallel, otherwise it takes to long
 if __name__ == '__main__':
     experiment().runInParallel(numProcesses=4, numThreads=8)
-
