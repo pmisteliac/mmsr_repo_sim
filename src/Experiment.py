@@ -5,6 +5,7 @@ from CsvHelper import read, write, createDir
 from Validator import validateTopicModel
 import os
 import time
+import datetime
 
 
 def experiment():
@@ -12,27 +13,36 @@ def experiment():
     inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
-    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
     inputPathTraining = os.path.abspath(inputPathTrainingRaw)
 
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
-    # trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(11,16):
-        experimentDescription = str(i) + "_20-07-Validation-Comments"
+    trainingNames, trainingFeatures =  read(inputPathTraining)
+    for i in range(39,42):
+        now = datetime.datetime.now()
+        dateTime = now.strftime("%d-%m-%Y-%H-%M")
+        experimentDescription = str(i) + '_' + dateTime + "Full-NoComments"
         pipeline(experimentDescription, trainingNames, validationNames, trainingFeatures, validationFeatures)
 
 
 def pipeline(description, trainingNames, validationNames, trainingFeatureLists, valiationFeatureLists):
+    print('\n-----------------------EXPERIMENT STARTED-----------------------')
+    print(description, '\n')
+
     startTime = time.time()
 
-    experimentPath = "results/" + description
+    currentDir = os.path.dirname( __file__ )
+    experimentPathRaw = os.path.join(currentDir, '..', "results/" + description)
+    experimentPath = os.path.abspath(experimentPathRaw)
 
     # generate a topic model from the raw input, with each document in the model representing an entire repository
     # (topicModels, dictionary, corpus, processedFeatures, topicCounts)
     documentFeatureLists = valiationFeatureLists + trainingFeatureLists
     repositoryNames = validationNames + trainingNames
-    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, 16)
+
+    topicLimit = min(128, len(repositoryNames) - 1)
+    topicModels, dictionary, corpus, repositoryFeatures, topicCounts, alphas, betas = modelTopics(documentFeatureLists, 2, topicLimit)
 
     # evaluate the generated models to find the best one
     silhouetteScores, coherenceScores = evaluateModels(topicModels, topicCounts, dictionary, corpus, repositoryFeatures)
@@ -42,7 +52,7 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     print('Silhouette Scores:', silhouetteScores)
     print('Coherence Scores:', coherenceScores)
     # select the best topic model based in the coherenceScores
-    finalModel, modelIndex = selectTopicModel(topicModels, silhouetteScores)
+    finalModel, modelIndex = selectTopicModel(topicModels, silhouetteScores, coherenceScores)
 
     # create a similarity matrix for all documents in the topic model
     similarityMatrix = calculateSimilarity(finalModel, corpus)
@@ -63,12 +73,39 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     print('Silhouette Score:', silhouetteScores[modelIndex])
     print('Coherence Score:', coherenceScores[modelIndex])
     print('\nSimilarity matrix:', similarityMatrix)
-    print('-----------------------FINISH-----------------------\n')
+    print('-----------------------END RESULTS-----------------------\n')
+
+    # create similarity matrix and compute accuracy for all topic models, to evaluate correctness of topic selection
+    similarityMatrices = []
+    accuracies = []
+    for currentModel in range(len(parameters)):
+        currentSimilarityMatrix = calculateSimilarity(topicModels[currentModel], corpus)
+        similarityMatrices.append(currentSimilarityMatrix)
+        currentAccuracy = validateTopicModel(currentSimilarityMatrix, idNameDict, range(len(validationNames)))
+        accuracies.append(currentAccuracy)
 
     # save experiment data
-    dumpExperimentResults = [('Model Index', modelIndex), ('Execution Time', executionTime), ('Final Model Accuracy', accuracy), ('Parameters', parameters), ('Silhouette Scores', silhouetteScores), ('Coherence Scores', coherenceScores), ('Final Similarity matrix', similarityMatrix)]
-    write(experimentPath + "/results.csv", dumpExperimentResults)
+    resultDump = storeExperimentResults(description, modelIndex, executionTime, parameters, accuracies, silhouetteScores, coherenceScores, similarityMatrices)
+    write(experimentPath + "/results.csv", resultDump)
     write(experimentPath + "/processedFeatures.csv", repositoryFeatures)
+    print('-----------------------EXPERIMENT FINISHED-----------------------\n')
+
+
+# stores the experiment result in a csv file, which can be easily imported into sheets
+def storeExperimentResults(description, modelIndex, executionTime, parameters, accuracies, silhouetteScores, coherenceScores, similarityMatrices):
+    # List[Experiment Description, Model Index, Execution Time, Model Accuracy, Parameters, Silhouette Score, Coherence Score, Similarity Matrix]
+    outputData = []
+
+    # store all experiment data for all topic model configurations
+    for currentModel in range(len(parameters)):
+        accuracy = accuracies[currentModel]
+        parameter = parameters[currentModel]
+        silhouetteScore = silhouetteScores[currentModel]
+        coherenceScore = coherenceScores[currentModel]
+        similarityMatrix = similarityMatrices[currentModel]
+        outputData.append([description, modelIndex, executionTime, accuracy, parameter, silhouetteScore, coherenceScore, similarityMatrix])
+
+    return outputData
 
 
 # execute in parallel, otherwise it takes to long
