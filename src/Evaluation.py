@@ -49,12 +49,27 @@ def cluster(similarityMatrix, topicCount):
     return kmeans.fit(similarityMatrix)
 
 
+# Model selection
 # select the best topic model from the given models for a specific corpus
-def selectTopicModel(topicModels, silhouetteScores):
-    bestIndex = silhouetteScores.index(max(silhouetteScores))
+def selectTopicModel(topicModels, silhouetteScores, CoherenceScores):
+    combinedScores = calculateSilhouetteCoherenceScore(silhouetteScores, CoherenceScores)
+    bestIndex = combinedScores.index(max(combinedScores))
     return topicModels[bestIndex], bestIndex
 
 
+# combine silhouette and coherence score into a new score ranging from 0 to 1
+def calculateSilhouetteCoherenceScore(silhouetteScores, CoherenceScores):
+    silhouetteScoresNormalized = [normalizeSilhouetteScore(silhouette) for silhouette in silhouetteScores]
+    return [(silhouette + coherence) / 2 for silhouette, coherence
+                      in zip(silhouetteScoresNormalized, CoherenceScores)]
+
+
+# normalize the silhouette score into the range from 0 to 1
+def normalizeSilhouetteScore(silhouetteScore):
+    return (silhouetteScore + 1.0) / 2.0
+
+
+# Visualization
 def plot(parameters, scores, scoreDescrption, parameterDescription):
     plotter.yticks(parameters, scores)
     plotter.xlabel(parameterDescription)
