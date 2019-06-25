@@ -14,13 +14,13 @@ def experiment():
     inputPathCuratedRaw = os.path.join(currentDir, '..', 'term_extractor/result/curated_repos_nocom.csv')
     inputPathCurated = os.path.abspath(inputPathCuratedRaw)
 
-    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos.csv')
+    inputPathTrainingRaw = os.path.join(currentDir, '..', 'term_extractor/result/top_repos_nocom.csv')
     inputPathTraining = os.path.abspath(inputPathTrainingRaw)
 
     validationNames, validationFeatures, trainingNames, trainingFeatures = [], [], [], []
     validationNames, validationFeatures = read(inputPathCurated)
-    trainingNames, trainingFeatures =  read(inputPathTraining)
-    for i in range(39,42):
+    # trainingNames, trainingFeatures =  read(inputPathTraining)
+    for i in range(139,142):
         now = datetime.datetime.now()
         dateTime = now.strftime("%d-%m-%Y-%H-%M")
         experimentDescription = str(i) + '_' + dateTime + "Full-NoComments"
@@ -75,7 +75,6 @@ def pipeline(description, trainingNames, validationNames, trainingFeatureLists, 
     print('Silhouette Score:', silhouetteScores[modelIndex])
     print('Coherence Score:', coherenceScores[modelIndex])
     print('\nSimilarity matrix:', similarityMatrix)
-    save_sim_matrix_plot(similarityMatrix, experimentPath, 'Similarity')
     print('-----------------------END RESULTS-----------------------\n')
 
     # create similarity matrix and compute accuracy for all topic models, to evaluate correctness of topic selection
